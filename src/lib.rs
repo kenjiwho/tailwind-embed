@@ -20,7 +20,7 @@ pub fn tailwind_css(input: TokenStream) -> TokenStream {
             result.extend([TokenTree::Literal(Literal::string(&css))]);
             result
         }
-        Err(e) => panic!("tailwindcss-embed: {e}"),
+        Err(e) => panic!("tailwind-embed: {e}"),
     }
 }
 
@@ -54,9 +54,11 @@ fn compile(input: String) -> Result<String, String> {
 
     // check tailwindcss command status
     if !output.status.success() {
+        let stderr = strip_ansi_escapes::strip(&output.stderr);
+
         return Err(format!(
             "Tailwind compilation failed:\n{}",
-            String::from_utf8_lossy(&output.stderr)
+            String::from_utf8_lossy(&stderr)
         ));
     }
 
