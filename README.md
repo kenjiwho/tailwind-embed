@@ -96,6 +96,68 @@ fn main() {
 }
 ```
 
+### Custom CSS and Theme Configuration
+
+You can provide additional CSS to configure Tailwind CSS alongside its utility classes. This is useful for defining design tokens with `@theme`, applying global styles to `:root`, or adding custom CSS rules.
+
+Pass your CSS directly to the `tailwind_css!()` macro as a string literal:
+
+```rust
+// src/style.rs
+
+pub const CSS: &str = tailwind_css!(
+    "
+@theme {
+    --color-background: #12141a;
+    --color-foreground: #e8ecf4;
+    --color-surface: #191d26;
+    --color-primary: #3b6cf6;
+    --color-muted: #7d879b;
+}
+
+@layer base {
+    :root {
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+        font-family: sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+"
+);
+```
+
+The `@theme` directive defines custom design tokens and makes corresponding Tailwind utility classes available. For example, the configuration above provides classes such as `bg-background`, `text-foreground`, `bg-surface`, and `bg-primary`.
+
+The `@layer base` section applies global styles to the root element without requiring it to have a class. You can also add ordinary CSS selectors and custom rules alongside Tailwind's directives.
+
+Use the generated stylesheet in your application:
+
+```rust
+// src/main.rs
+
+mod style;
+
+fn main() -> Result<(), zgui::Error> {
+    app()
+        .with_title("My Tailwind App")
+        .with_stylesheet(style::CSS)
+        .run(|| view! {
+            column(class = "items-center gap-4 p-8 rounded-2xl bg-surface") {
+                text(class = "text-2xl font-bold text-foreground") {
+                    "Hello, Tailwind!"
+                }
+
+                text(class = "text-muted") {
+                    "Configured with custom theme tokens."
+                }
+            }
+        })
+}
+```
+
 ## How it works
 
 When Rust expands the procedural macro during compilation:
@@ -149,4 +211,5 @@ Tailwind CSS v4 generates modern CSS. Your application's CSS engine must support
 For example, when using ZGUI, compatibility depends on the CSS features supported by its Stylo-based styling system.
 
 ## License
+
 - [MIT](LICENSE)

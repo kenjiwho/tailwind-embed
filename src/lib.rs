@@ -4,10 +4,17 @@ use std::{
 };
 
 use proc_macro::{Literal, TokenStream, TokenTree};
+use syn::{LitStr, parse_macro_input};
 
 #[proc_macro]
-pub fn tailwind_css(_input: TokenStream) -> TokenStream {
-    match compile() {
+pub fn tailwind_css(input: TokenStream) -> TokenStream {
+    let input_str = if input.is_empty() {
+        String::new()
+    } else {
+        parse_macro_input!(input as LitStr).value()
+    };
+
+    match compile(input_str) {
         Ok(css) => {
             let mut result = TokenStream::new();
             result.extend([TokenTree::Literal(Literal::string(&css))]);
@@ -17,7 +24,7 @@ pub fn tailwind_css(_input: TokenStream) -> TokenStream {
     }
 }
 
-fn compile() -> Result<String, String> {
+fn compile(input: String) -> Result<String, String> {
     let project_dir = std::env::var("CARGO_MANIFEST_DIR")
         .map_err(|_| "Could not determine project directory".to_string())?;
 
@@ -32,11 +39,12 @@ fn compile() -> Result<String, String> {
         .map_err(|e| format!("Failed to start Tailwind CLI: {e}"))?;
 
     // Send CSS input to Tailwind
+    let input_css = format!(r#"@import "tailwindcss"; @source "."; {}"#, input);
     child
         .stdin
         .take()
         .ok_or("Failed to open stdin")?
-        .write_all(br#"@import "tailwindcss"; @source ".";"#)
+        .write_all(input_css.as_bytes())
         .map_err(|e| format!("Failed to write CSS input: {e}"))?;
 
     // Collect generated CSS
