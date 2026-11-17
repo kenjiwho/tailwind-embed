@@ -2,6 +2,12 @@
 name = "tailwind-embed"
 version = "0.1.0"
 edition = "2024"
+description = "Compile and embed Tailwind CSS directly into Rust applications."
+license = "MIT"
+repository = "https://github.com/kenjiwho/tailwind-embed"
+readme = "README.md"
+keywords = ["tailwind", "tailwindcss", "css", "embed"]
+categories = ["development-tools::build-utils"]
 
 [lib]
 proc-macro = true
