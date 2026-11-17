@@ -1,6 +1,6 @@
-# tailwindcss-embed
+# tailwind-embed
 
-`tailwindcss-embed` is a Rust procedural macro crate that runs the Tailwind CSS CLI at compile time, captures the generated CSS, and embeds it directly into your application as a static string.
+`tailwind-embed` is a Rust procedural macro crate that runs the Tailwind CSS CLI at compile time, captures the generated CSS, and embeds it directly into your application as a static string.
 
 It allows Rust projects to use Tailwind CSS without manually generating or maintaining a CSS output file.
 
