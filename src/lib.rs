@@ -13,7 +13,7 @@ pub fn tailwind_css(_input: TokenStream) -> TokenStream {
             result.extend([TokenTree::Literal(Literal::string(&css))]);
             result
         }
-        Err(e) => format!("tailwindcss-embed: {e}").parse().unwrap(),
+        Err(e) => panic!("tailwindcss-embed: {e}"),
     }
 }
 
